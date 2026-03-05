@@ -669,6 +669,74 @@ func (s *AppServer) handlePostComment(ctx context.Context, args map[string]inter
 	}
 }
 
+// handlePublishArticle 处理发布长文
+func (s *AppServer) handlePublishArticle(ctx context.Context, args map[string]interface{}) *MCPToolResult {
+	logrus.Info("MCP: 发布长文内容")
+
+	// 解析参数
+	title, _ := args["title"].(string)
+	content, _ := args["content"].(string)
+	tagsInterface, _ := args["tags"].([]interface{})
+	productsInterface, _ := args["products"].([]interface{})
+	templateName, _ := args["template_name"].(string)
+
+	var tags []string
+	for _, tag := range tagsInterface {
+		if tagStr, ok := tag.(string); ok {
+			tags = append(tags, tagStr)
+		}
+	}
+
+	var products []string
+	for _, p := range productsInterface {
+		if pStr, ok := p.(string); ok {
+			products = append(products, pStr)
+		}
+	}
+
+	// 解析定时发布参数
+	scheduleAt, _ := args["schedule_at"].(string)
+	visibility := parseVisibility(args)
+
+	// 解析原创参数
+	isOriginal, _ := args["is_original"].(bool)
+
+	logrus.Infof("MCP: 发布长文 - 标题: %s, 标签数量: %d, 定时: %s, 原创: %v, visibility: %s, 商品: %v, 模板: %s",
+		title, len(tags), scheduleAt, isOriginal, visibility, products, templateName)
+
+	// 构建发布请求
+	req := &PublishArticleRequest{
+		Title:        title,
+		Content:      content,
+		Tags:         tags,
+		ScheduleAt:   scheduleAt,
+		IsOriginal:   isOriginal,
+		Visibility:   visibility,
+		Products:     products,
+		TemplateName: templateName,
+	}
+
+	// 执行发布
+	result, err := s.xiaohongshuService.PublishArticle(ctx, req)
+	if err != nil {
+		return &MCPToolResult{
+			Content: []MCPContent{{
+				Type: "text",
+				Text: "长文发布失败: " + err.Error(),
+			}},
+			IsError: true,
+		}
+	}
+
+	resultText := fmt.Sprintf("长文发布成功: %+v", result)
+	return &MCPToolResult{
+		Content: []MCPContent{{
+			Type: "text",
+			Text: resultText,
+		}},
+	}
+}
+
 // handleReplyComment 处理回复评论
 func (s *AppServer) handleReplyComment(ctx context.Context, args map[string]interface{}) *MCPToolResult {
 	logrus.Info("MCP: 回复评论")

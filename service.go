@@ -80,6 +80,27 @@ type PublishVideoResponse struct {
 	PostID  string `json:"post_id,omitempty"`
 }
 
+// PublishArticleRequest 发布长文请求
+type PublishArticleRequest struct {
+	Title        string   `json:"title" binding:"required"`
+	Content      string   `json:"content" binding:"required"`
+	Tags         []string `json:"tags,omitempty"`
+	ScheduleAt   string   `json:"schedule_at,omitempty"`   // 定时发布时间，ISO8601格式，为空则立即发布
+	IsOriginal   bool     `json:"is_original,omitempty"`   // 是否声明原创
+	Visibility   string   `json:"visibility,omitempty"`    // 可见范围: "公开可见"(默认), "仅自己可见", "仅互关好友可见"
+	Products     []string `json:"products,omitempty"`      // 商品关键词列表，用于绑定带货商品
+	TemplateName string   `json:"template_name,omitempty"` // 模板名称，如"简约基础"等
+}
+
+// PublishArticleResponse 发布长文响应
+type PublishArticleResponse struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Status  string `json:"status"`
+	PostID  string `json:"post_id,omitempty"`
+	PostURL string `json:"post_url,omitempty"`
+}
+
 // FeedsListResponse Feeds列表响应
 type FeedsListResponse struct {
 	Feeds []xiaohongshu.Feed `json:"feeds"`
@@ -341,6 +362,83 @@ func (s *XiaohongshuService) publishVideo(ctx context.Context, content xiaohongs
 	}
 
 	return action.PublishVideo(ctx, content)
+}
+
+// PublishArticle 发布长文
+func (s *XiaohongshuService) PublishArticle(ctx context.Context, req *PublishArticleRequest) (*PublishArticleResponse, error) {
+	// 标题长度校验（小红书限制：最大64字）
+	if len(req.Title) > 64 {
+		return nil, fmt.Errorf("标题长度超过64字限制")
+	}
+
+	// 解析定时发布时间
+	var scheduleTime *time.Time
+	if req.ScheduleAt != "" {
+		t, err := time.Parse(time.RFC3339, req.ScheduleAt)
+		if err != nil {
+			return nil, fmt.Errorf("定时发布时间格式错误，请使用 ISO8601 格式: %v", err)
+		}
+
+		// 校验定时发布时间范围：1小时至14天
+		now := time.Now()
+		minTime := now.Add(1 * time.Hour)
+		maxTime := now.Add(14 * 24 * time.Hour)
+
+		if t.Before(minTime) {
+			return nil, fmt.Errorf("定时发布时间必须至少在1小时后，当前设置: %s，最早可选: %s",
+				t.Format("2006-01-02 15:04"), minTime.Format("2006-01-02 15:04"))
+		}
+		if t.After(maxTime) {
+			return nil, fmt.Errorf("定时发布时间不能超过14天，当前设置: %s，最晚可选: %s",
+				t.Format("2006-01-02 15:04"), maxTime.Format("2006-01-02 15:04"))
+		}
+
+		scheduleTime = &t
+		logrus.Infof("设置定时发布时间: %s", t.Format("2006-01-02 15:04"))
+	}
+
+	// 构建发布内容
+	content := xiaohongshu.PublishArticleContent{
+		Title:        req.Title,
+		Content:      req.Content,
+		Tags:         req.Tags,
+		ScheduleTime: scheduleTime,
+		IsOriginal:   req.IsOriginal,
+		Visibility:   req.Visibility,
+		Products:     req.Products,
+		TemplateName: req.TemplateName,
+	}
+
+	// 执行发布
+	publishResult, err := s.publishArticle(ctx, content)
+	if err != nil {
+		logrus.Errorf("发布长文失败: title=%s %v", content.Title, err)
+		return nil, err
+	}
+
+	return &PublishArticleResponse{
+		Title:   req.Title,
+		Content: req.Content,
+		Status:  "发布完成",
+		PostID:  publishResult.PostID,
+		PostURL: publishResult.PostURL,
+	}, nil
+}
+
+// publishArticle 执行长文发布
+func (s *XiaohongshuService) publishArticle(ctx context.Context, content xiaohongshu.PublishArticleContent) (*xiaohongshu.ArticlePublishResult, error) {
+	b := newBrowser()
+	defer b.Close()
+
+	page := b.NewPage()
+	defer page.Close()
+
+	action, err := xiaohongshu.NewPublishArticleAction(page)
+	if err != nil {
+		return nil, err
+	}
+
+	return action.PublishArticle(ctx, content)
 }
 
 // ListFeeds 获取Feeds列表

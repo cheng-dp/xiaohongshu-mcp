@@ -492,21 +492,37 @@ func inputTag(contentElem *rod.Element, tag string) error {
 	time.Sleep(1 * time.Second)
 
 	page := contentElem.Page()
-	topicContainer, err := page.Element("#creator-editor-topic-container")
-	if err != nil || topicContainer == nil {
-		slog.Warn("未找到标签联想下拉框，直接输入空格", "tag", tag)
+	// 兼容不同版本页面的话题联想结构：老版容器 + 新版 tooltip
+	clicked, err := page.Eval(`() => {
+		const candidates = [
+			'#creator-editor-topic-container .item',
+			'#creator-editor-topic-container [class*="item"]',
+			'[role="tooltip"] [class*="item"]',
+			'[role="tooltip"] [class*="option"]',
+			'.d-tooltip [class*="item"]',
+			'.d-tooltip [class*="option"]',
+		];
+		for (const sel of candidates) {
+			const nodes = document.querySelectorAll(sel);
+			for (const node of nodes) {
+				if (!node || node.offsetParent === null) continue;
+				const text = (node.textContent || '').trim();
+				if (!text) continue;
+				node.click();
+				return true;
+			}
+		}
+		return false;
+	}`)
+	if err != nil {
+		slog.Warn("点击标签联想选项脚本执行失败，改为空格兜底", "tag", tag, "error", err)
 		return contentElem.Input(" ")
 	}
-
-	firstItem, err := topicContainer.Element(".item")
-	if err != nil || firstItem == nil {
+	if !clicked.Value.Bool() {
 		slog.Warn("未找到标签联想选项，直接输入空格", "tag", tag)
 		return contentElem.Input(" ")
 	}
 
-	if err := firstItem.Click(proto.InputMouseButtonLeft, 1); err != nil {
-		return errors.Wrap(err, "点击标签联想选项失败")
-	}
 	slog.Info("成功点击标签联想选项", "tag", tag)
 	time.Sleep(200 * time.Millisecond)
 
