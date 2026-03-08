@@ -1,0 +1,74 @@
+- generic [ref=e3]:
+  - generic [ref=e6] [cursor=pointer]: 遇到问题
+  - generic [ref=e8]:
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - img [ref=e13]
+        - generic [ref=e16]: 创作服务平台
+      - generic [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e20]: 老周的社会化笔记
+        - img [ref=e21]
+    - main [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e28] [cursor=pointer]:
+          - img [ref=e29]
+          - generic [ref=e32]: 发布笔记
+          - img [ref=e33]
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - img [ref=e40]
+              - generic [ref=e43]: 首页
+            - generic [ref=e44]:
+              - img [ref=e47]
+              - generic [ref=e50]: 笔记管理
+            - generic [ref=e52]:
+              - img [ref=e55]
+              - generic [ref=e57]: 数据看板
+              - img [ref=e60]
+            - generic [ref=e62]:
+              - img [ref=e65]
+              - generic [ref=e68]: 活动中心
+            - generic [ref=e69]:
+              - img [ref=e72]
+              - generic [ref=e75]: 笔记灵感
+            - generic [ref=e76]:
+              - img [ref=e79]
+              - generic [ref=e82]: 创作学院
+            - generic [ref=e83]:
+              - img [ref=e86]
+              - generic [ref=e89]: 创作百科
+          - generic [ref=e90]:
+            - img [ref=e92]
+            - generic [ref=e94]: 收起侧边栏
+      - generic [ref=e101]:
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e105] [cursor=pointer]: 上传视频
+            - generic [ref=e107] [cursor=pointer]: 上传图文
+            - generic [ref=e109] [cursor=pointer]: 上传图文
+            - generic [ref=e111] [cursor=pointer]: 写长文
+          - generic [ref=e113]:
+            - img [ref=e114]
+            - generic [ref=e116] [cursor=pointer]: 草稿箱(0)
+        - generic [ref=e117]:
+          - generic [ref=e119]:
+            - button "Choose File"
+            - generic [ref=e120] [cursor=pointer]:
+              - img [ref=e121]
+              - paragraph [ref=e122]: 拖拽视频到此或点击上传
+              - button "上传视频" [ref=e123]:
+                - generic [ref=e125]: 上传视频
+          - generic [ref=e126]:
+            - generic [ref=e128]:
+              - paragraph [ref=e129]: 视频大小
+              - paragraph [ref=e130]: 支持时长4小时以内，
+              - paragraph [ref=e131]: 最大20GB的视频文件
+            - generic [ref=e133]:
+              - paragraph [ref=e134]: 视频格式
+              - paragraph [ref=e135]: 支持常用视频格式，
+              - paragraph [ref=e136]: 推荐使用mp4、mov
+            - generic [ref=e138]:
+              - paragraph [ref=e139]: 视频分辨率
+              - paragraph [ref=e140]: 超过1080P的视频用网页端上传画质更清晰

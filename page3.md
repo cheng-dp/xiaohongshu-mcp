@@ -1,0 +1,83 @@
+- generic [ref=e3]:
+  - generic [ref=e6] [cursor=pointer]: 遇到问题
+  - generic [ref=e8]:
+    - generic [ref=e10]:
+      - generic [ref=e12]:
+        - img [ref=e13]
+        - generic [ref=e16]: 创作服务平台
+      - generic [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+        - generic [ref=e20]: 老周的社会化笔记
+        - img [ref=e21]
+    - main [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e28] [cursor=pointer]:
+          - img [ref=e29]
+          - generic [ref=e32]: 发布笔记
+          - img [ref=e33]
+        - generic [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - img [ref=e40]
+              - generic [ref=e43]: 首页
+            - generic [ref=e44]:
+              - img [ref=e47]
+              - generic [ref=e50]: 笔记管理
+            - generic [ref=e52]:
+              - img [ref=e55]
+              - generic [ref=e57]: 数据看板
+              - img [ref=e60]
+            - generic [ref=e62]:
+              - img [ref=e65]
+              - generic [ref=e68]: 活动中心
+            - generic [ref=e69]:
+              - img [ref=e72]
+              - generic [ref=e75]: 笔记灵感
+            - generic [ref=e76]:
+              - img [ref=e79]
+              - generic [ref=e82]: 创作学院
+            - generic [ref=e83]:
+              - img [ref=e86]
+              - generic [ref=e89]: 创作百科
+          - generic [ref=e90]:
+            - img [ref=e92]
+            - generic [ref=e94]: 收起侧边栏
+      - generic [ref=e175]:
+        - generic [ref=e176]:
+          - generic [ref=e177] [cursor=pointer]:
+            - img [ref=e178]
+            - generic [ref=e180]: 新的创作
+          - generic [ref=e182]:
+            - button [ref=e183]:
+              - img [ref=e184]
+            - button [ref=e186]:
+              - img [ref=e187]
+            - button [ref=e190] [cursor=pointer]:
+              - img [ref=e191]
+            - button [ref=e194] [cursor=pointer]:
+              - img [ref=e195]
+            - button [ref=e198] [cursor=pointer]:
+              - img [ref=e199]
+            - button [ref=e202] [cursor=pointer]:
+              - img [ref=e203]
+            - button [ref=e207] [cursor=pointer]:
+              - img [ref=e208]
+            - button [ref=e210] [cursor=pointer]:
+              - img [ref=e211]
+            - button [ref=e215] [cursor=pointer]:
+              - img [ref=e216]
+            - button [ref=e219] [cursor=pointer]:
+              - img [ref=e220]
+        - generic [ref=e225]:
+          - generic [ref=e226]:
+            - generic [ref=e228]:
+              - textbox "输入标题" [ref=e229]
+              - textbox
+            - generic [ref=e230]: 0/64
+          - paragraph [ref=e234]: 粘贴到这里或输入文字
+        - generic [ref=e235]:
+          - button "一键排版" [ref=e236] [cursor=pointer]:
+            - generic [ref=e239]: 一键排版
+          - button "暂存离开" [ref=e240] [cursor=pointer]:
+            - generic [ref=e243]: 暂存离开
+          - generic [ref=e244]: 字数：0

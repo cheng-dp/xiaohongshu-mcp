@@ -345,7 +345,10 @@ func fillPublishSettings(page *rod.Page, content PublishArticleContent) error {
 
 	// 输入话题标签
 	if len(content.Tags) > 0 {
-		if err := inputArticleTags(page, content.Tags); err != nil {
+		// 保护：仍处于“新的创作/模板页”时禁止输入话题，避免污染上一页编辑内容。
+		if onPrePublishPage, _ := isOnArticlePrePublishPage(page); onPrePublishPage {
+			logrus.Warn("检测到仍在长文编辑/模板页，跳过输入话题标签，等待进入发布设置页后再执行")
+		} else if err := inputArticleTags(page, content.Tags); err != nil {
 			logrus.Warnf("输入话题标签失败: %v", err)
 		}
 	}
@@ -493,6 +496,20 @@ func findArticleContentElement(page *rod.Page) (*rod.Element, error) {
 	}
 
 	return nil, errors.New("no contenteditable textbox found")
+}
+
+// isOnArticlePrePublishPage 判断是否仍在“新的创作/模板页”阶段（下一步按钮可见）
+func isOnArticlePrePublishPage(page *rod.Page) (bool, error) {
+	result, err := page.Eval(`() => {
+		const hasNext = Array.from(document.querySelectorAll('button'))
+			.some(btn => btn && btn.offsetParent !== null && (btn.textContent || '').trim() === '下一步');
+		const hasTemplateCard = document.querySelectorAll('.template-card').length > 0;
+		return hasNext || hasTemplateCard;
+	}`)
+	if err != nil {
+		return false, err
+	}
+	return result.Value.Bool(), nil
 }
 
 // setArticleSchedulePublish 设置定时发布

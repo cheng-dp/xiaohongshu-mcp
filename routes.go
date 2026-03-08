@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"net/http/httptest"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -32,8 +35,48 @@ func setupRoutes(appServer *AppServer) *gin.Engine {
 			JSONResponse: true, // 支持 JSON 响应
 		},
 	)
-	router.Any("/mcp", gin.WrapH(mcpHandler))
-	router.Any("/mcp/*path", gin.WrapH(mcpHandler))
+	// 兼容层：部分 MCP 客户端会先发起 GET /mcp 探测，如果未带会话时返回 text/plain，
+	// 会导致客户端因 Content-Type 非 application/json 报错。
+	mcpCompatHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && r.Header.Get("Mcp-Session-Id") == "" {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"jsonrpc":"2.0","error":{"code":-32000,"message":"GET requires an active session"}}`))
+			return
+		}
+
+		// 兼容部分客户端：官方 handler 在某些错误场景（如 session not found）会返回 text/plain。
+		// 这里将 POST 的 text/plain 错误统一转换为 JSON-RPC 错误，避免客户端因 Content-Type 报协议错误。
+		if r.Method == http.MethodPost {
+			rec := httptest.NewRecorder()
+			mcpHandler.ServeHTTP(rec, r)
+
+			if strings.HasPrefix(rec.Header().Get("Content-Type"), "text/plain") {
+				msg := strings.TrimSpace(rec.Body.String())
+				if msg == "" {
+					msg = "MCP request failed"
+				}
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(rec.Code)
+				_, _ = w.Write([]byte(fmt.Sprintf(`{"jsonrpc":"2.0","error":{"code":-32000,"message":%q}}`, msg)))
+				return
+			}
+
+			for k, vals := range rec.Header() {
+				for _, v := range vals {
+					w.Header().Add(k, v)
+				}
+			}
+			w.WriteHeader(rec.Code)
+			_, _ = w.Write(rec.Body.Bytes())
+			return
+		}
+
+		mcpHandler.ServeHTTP(w, r)
+	})
+
+	router.Any("/mcp", gin.WrapH(mcpCompatHandler))
+	router.Any("/mcp/*path", gin.WrapH(mcpCompatHandler))
 
 	// API 路由组
 	api := router.Group("/api/v1")

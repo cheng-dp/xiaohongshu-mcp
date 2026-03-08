@@ -1,0 +1,36 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - img [ref=e6]
+      - generic [ref=e9]: 创作服务平台
+    - link "创作百科" [ref=e11] [cursor=pointer]:
+      - /url: /creator/encyclopedia?from_login=true
+  - generic [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - text: 加入我们
+          - text: 解锁创作者专属功能
+        - text: 让创作发布、数据分析、商业变现更高效。
+      - generic [ref=e43]:
+        - img [ref=e44] [cursor=pointer]
+        - generic [ref=e45]:
+          - generic [ref=e48] [cursor=pointer]: 短信登录
+          - generic [ref=e50]:
+            - generic [ref=e51]:
+              - list [ref=e54] [cursor=pointer]:
+                - textbox "请选择选项" [ref=e55]: "+86"
+                - generic [ref=e56]:
+                  - img
+              - textbox "手机号" [active] [ref=e58]
+            - generic [ref=e59]:
+              - textbox "验证码" [ref=e60]
+              - generic [ref=e64]: 发送验证码
+            - generic [ref=e65] [cursor=pointer]: 收不到验证码？
+          - button "登 录" [ref=e66] [cursor=pointer]:
+            - generic [ref=e67]: 登 录
+    - generic [ref=e68]:
+      - link "关于小红书" [ref=e70] [cursor=pointer]:
+        - /url: https://www.xiaohongshu.com/protocols/about?language=zh-CN
+      - link "沪ICP备 13030189号 Copyright © 2014-2026 行吟信息科技（上海）有限公司" [ref=e72] [cursor=pointer]:
+        - /url: //icp.chinaz.com/info?q=xiaohongshu.com
